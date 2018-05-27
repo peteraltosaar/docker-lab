@@ -104,4 +104,9 @@ So what is going on here?  Some interesting things to note:
    4. Go back to step a until you have reached the end of your Docker commands.
 2. The first image layer we see is 01a9fe974dba as part of Step 1/13.  This layer is populated by the FROM fedora:22 command, which means "Start with fedora:22 as my base image to build upon."  You always have to start with a FROM command, to specify what to start from.  If you actually want to start an entirely new image, you would specify FROM scratch, which is an empty image.  For what it is worth, it is exceedingly unlikely that we would ever need to do this -- there is always going to be an image that has done much of the groundwork for us to build upon.
 3. Docker will remove intermediate containers, e.g. ```Removing intermediate container 7b0a55e4a76b```.  It is not clear to me at this time why Docker does not display this message for ```ADD``` commands.
-         
+4. The ID for the final container -- what you actually want out of this whole process -- is displayed at the end: ```Successfully built 49aee06e8e38```.  We will learn about how to give images more human-friendly names later.
+
+---
+## 6. Exploring Containers
+
+Docker allows you to execute arbitrary commands inside of already-running containers.  This can be useful for debugging containers, but is generally frowned upon for production purposes.  It is considered a best practice that 
