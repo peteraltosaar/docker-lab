@@ -1,4 +1,5 @@
 # Docker Lab instructions
+Please note, this tutorial requires you to have Docker Community Edition installed on your computer.  Get it [here](https://www.docker.com/community-edition).
 
 ## 1. Docker Hello World
 Please note: if it seems like a lot is being introduced right off the bat, it's just to expose you to it.  We will be exploring everything touched on here in greater details as the tutorial proceeds.
