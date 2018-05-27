@@ -60,3 +60,31 @@ Here is the URL for the Docker Hub page for the hello-world image (this page is 
 1. Run the following command to clone the specified git repo to your local host:
 ```git clone https://github.com/spkane/wearebigchill.git --config core.autocrlf=input```
 2. [Click here](/outputs/wearebigchill-docker-build-output.txt) for the output that you ought to be seeing from this command.
+   * Here is a subset of the output:
+     ```Step 1/13 : FROM fedora:22
+        ---> 01a9fe974dba
+        
+        ...
+        
+        Step 11/13 : ENV THEME 1
+        ---> Running in 485f1c9d017c
+        Removing intermediate container 485f1c9d017c
+        ---> b3d9e3838d1
+        Step 12/13 : EXPOSE 80
+        ---> Running in 7b0a55e4a76b
+        Removing intermediate container 7b0a55e4a76b
+        ---> 3a348f8ca063
+      ```
+   * Some interesting things to note on what is going on here:
+     1. Docker builds up images in an incremental, back and forth fashion:
+        1. An image is instantiated as an "intermediate container".
+           * Step 12/13 instantiates the image layer ```b3d9e3838d1``` from Step 11/13.  This intermediate container has an id of ```7b0a55e4a76b```.
+        2. A command is executed in that container to change its state in some desired way (changing contents, variables, etc.).
+           * In Step 12/13 this command is ```EXPOSE 80```, which tells Docker to expose port 80 on the app to the host OS (More on this in a bit).
+        3. A snapshot of the container after step 2. is captured as a new image.  
+           * After executing the EXPOSE 80 command in the intermediate container, Docker captures this new state as a new image container: ```---> 3a348f8ca063```
+        4. Go back to Step 1 until you have reached the end of your Docker commands.
+           
+     2. The first image layer we see is 01a9fe974dba as part of Step 1/13.  This layer is populated by the FROM fedora:22 command, which means "Start with fedora:22 as my base image to build upon."  You always have to start with a FROM command, to specify what to start from.
+     3. Docker will remove intermediate containers, e.g. ```Removing intermediate container 7b0a55e4a76b```.  It is not clear to me at this time why Docker does not display this message for ```ADD``` commands.
+         
