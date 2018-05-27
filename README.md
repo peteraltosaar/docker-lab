@@ -59,7 +59,22 @@ Here is the URL for the Docker Hub page for the hello-world image (this page is 
 ## 3. A Taste of the Power of Docker
 1. Run the following command to clone the specified git repo to your local host:
 ```git clone https://github.com/spkane/wearebigchill.git --config core.autocrlf=input```
-2. [Click here](/outputs/wearebigchill-docker-build-output.txt) for the output that you ought to be seeing from this command.
+2. Change into the new folder: ```cd wearebigchill```
+3. Build the Docker image: ```docker build .```
+   [Click here](/outputs/wearebigchill-docker-build-output.txt) for the output that you ought to be seeing from this command.
+   The output will end with the following line: ```Successfully built 49aee06e8e38```. Your image id will differ from ```49aee06e8e38```.  You will need this id for the next command.
+4. Run the docker image: ```docker run -p 8090:80 <image ID from previous step>```.
+5. Go to [http://localhost:8090](http://localhost:8090) in your browser and try the game out for a spin.  Try not to mind the very suspect physics.  
+6. Admire how dead simple it actually was to start up a web server that serves up this "game".  
+7. Go back to your terminal and hit ```ctrl+c``` to stop the container.
+8. Restart the container, this time specifying an environment variable (more on this in a bit): ```docker run -p 8090:80 -e "THEME=2" <same image ID>```
+9. Refresh [http://localhost:8090](http://localhost:8090) and observe how it has changed.  You may need to open it in a private browsing window instead to avoid the browser cache loading up the previous version of the app.
+
+Bottom line: Docker makes it incredibly easy to distribute software that "just runs" on any system (that has Docker).  It is also extremely simple to configure the behaviour of your apps for different environments and situations.  There are other ways to modify a container's configuration besides the setting of environment variables via the -e command.
+---
+
+
+
    * Here is a subset of the output:
      ```Step 1/13 : FROM fedora:22
         ---> 01a9fe974dba
