@@ -1,4 +1,4 @@
-# Docker Lab instructions
+# Docker Lab
 Please note, this tutorial requires you to have Docker Community Edition installed on your computer.  Get it [here](https://www.docker.com/community-edition).
 
 ---
@@ -77,7 +77,7 @@ Bottom line: Docker makes it incredibly easy to distribute software that "just r
 
 ---
 ## 4. An Aside on the Creation of Images
-This section explores some (in my opinion) interesting details about how Docker goes about creating images.
+This section explores some (in my opinion) interesting details about how Docker goes about creating images.  It is not strictly necessary in order to use Docker, but I think it helps understand what images are and how they are formed.
 Here is a subset of the output from the ```docker build .``` command in the ```wearebigchill``` project folder:
 ```Step 1/13 : FROM fedora:22
    ---> 01a9fe974dba
