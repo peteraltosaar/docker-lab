@@ -59,4 +59,4 @@ Here is the URL for the Docker Hub page for the hello-world image (this page is 
 ## 3. A Taste of the Power of Docker
 1. Run the following command to clone the specified git repo to your local host:
 ```git clone https://github.com/spkane/wearebigchill.git --config core.autocrlf=input```
-2. ![Click here](/outputs/wearebigchill-docker-build-output.txt) for the output that you ought to be seeing from this command.
+2. [Click here](/outputs/wearebigchill-docker-build-output.txt) for the output that you ought to be seeing from this command.
