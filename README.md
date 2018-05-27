@@ -1,6 +1,6 @@
 # Docker Lab instructions
 Please note, this tutorial requires you to have Docker Community Edition installed on your computer.  Get it [here](https://www.docker.com/community-edition).
-
+---
 ## 1. Docker Hello World
 Please note: if it seems like a lot is being introduced right off the bat, it's just to expose you to it.  We will be exploring everything touched on here in greater details as the tutorial proceeds.
 
@@ -45,7 +45,7 @@ The description of what happened is a pretty good summary.  But here are some mo
      ```docker build my-container``` is equivalent to ```docker build my-container:latest```.  We will explore well-known problems with the "latest" tag in a bit.
 3. The Docker daemon creates a new container based on the "hello-world" image, and starts it.  In fact, the ```docker run``` command is a shorthand for two commands: ```docker create``` (which instantiates the container from the image) and ```docker start <image>``` (which actually runs it).
 4. The Docker daemon streams the output to the Docker client, which in turn sends it to your CLI.  By default, Docker will stream a container's output to your terminal.  You can ensure that Docker does not output to your terminal by using the -d or --detach flag, as in: ```docker run -d hello-world```.  You can think of the default as running a command in linux, outputting to the terminal vs. appending the command with an ampersand, which backgrounds the process and does not attach its output to your terminal.  i.e. ```top``` vs. ```top &```.
-
+---
 ## 2. Docker Hub
 Here is the URL for the Docker Hub page for the hello-world image (this page is its "repository"): https://hub.docker.com/_/hello-world/  -- It is worth familiarising yourself with the layout and content of Docker Hub pages.
 
@@ -55,3 +55,8 @@ Here is the URL for the Docker Hub page for the hello-world image (this page is 
 ![Docker Hub Tags page](/images/dockerhubtags.png)
 2. You are always provided with the command needed to pull an image, similar to how you can get a git repo's link to clone it locally.
 3. The _Full Description_ will provide a lot of interesting details about images.  It is common for the repository's maintainers to provide links to the Dockerfile(s) used to create the image.  This is in keeping with the open-source nature of a lot of Docker work - you can see for yourself exactly what is and is not in an image.  The content and quality of the _Full Description_ is going to vary by the maintainer(s).  My experience has been that "official" repos for products, e.g. Docker-related repos, Redis, Wordpress, etc. tend to have the best documentation.
+---
+## 3. A Taste of the Power of Docker
+1. Run the following command to clone the specified git repo to your local host:
+```git clone https://github.com/spkane/wearebigchill.git --config core.autocrlf=input```
+2. !Click here for the output that you ought to be seeing from this command.
