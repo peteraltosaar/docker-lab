@@ -184,7 +184,28 @@ So let's try to read the Dockerfile for wearebigchill again in light of our unde
 ```
 Hopefully it makes more sense now how the Dockerfile defines an image, and leads to your running container!  Hopefully you are starting to get a sense of how you could combine these (and oh so many other Dockerfile commands) to create a variety of different containers to suit your purposes.
 
+If you for some reason don't have access to the Dockerfile that created an image, you can still get a sense for how it was crafted using the ```docker history <image ID>``` command.  You will not see explicitly what files were copied into the image.  For instance:
+```docker history f61bd71f06d7
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+f61bd71f06d7        6 days ago          /bin/sh -c #(nop)  CMD ["/outyet" "-version"…   0B
+3eeb8619cd11        6 days ago          /bin/sh -c #(nop)  EXPOSE 18088                 0B
+5de5dcc8d294        6 days ago          /bin/sh -c #(nop) COPY file:20879a19eead23ea…   5.64MB
+afd7c486820e        6 days ago          /bin/sh -c #(nop) WORKDIR /                     0B
+ea99ba7b96d3        6 days ago          /bin/sh -c apk --no-cache add ca-certificates   555kB
+3fd9065eaf02        4 months ago        /bin/sh -c #(nop)  CMD ["/bin/sh"]              0B
+<missing>           4 months ago        /bin/sh -c #(nop) ADD file:093f0723fa46f6cdb…   4.15MB
+```
+
 ---
 ## 6. Exploring Containers
 
-Docker allows you to execute arbitrary commands inside of already-running containers.  This can be useful for debugging containers, but is generally frowned upon for production purposes.  It is considered a best practice that 
+You can list all running containers using the ```docker ps``` command (think ps, like the linux command for listing running processes).
+If the wearebigchill container is not running, run it now, using the ```docker run -p 8090:80 <image ID>``` command.  If you do not have the image ID handy, you can list all images you currently have downloaded on your system with the ```docker images``` command:
+```
+$docker images
+REPOSITORY           TAG                                        IMAGE ID            CREATED             SIZE
+<none>               <none>                                     49aee06e8e38        26 hours ago        355MB
+```
+So after ensuring that the container is running, type in ```docker ps```.  You should see something like the following output:
+
+Docker allows you to execute arbitrary commands inside of already-running containers.  This can be useful for debugging containers, but is generally frowned upon for production purposes.  It is considered best practice to have your container in its final state 
