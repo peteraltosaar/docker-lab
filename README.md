@@ -148,21 +148,41 @@ RUN mkdir /theme2
 Dockerfiles consist of commands and the content for said commands, in the format ```<COMMAND> <CONTENT>```
 In this particular file, there are 6 different types of commands:
 
-1. FROM <image>
+1. ```FROM <image>```
 This instructs Docker what image to use as a start.  Depending on your needs, you could, for instance, start with different flavours    of linux (FROM [alpine](https://hub.docker.com/_/alpine/), FROM [centos](https://hub.docker.com/_/centos/), FROM [debian](https://hub.docker.com/_/debian/), etc.), or start with an image that already has some kind of runtime or technology that you want your container to feature (FROM [openjdk](https://hub.docker.com/_/openjdk/), FROM [python](https://hub.docker.com/_/python/), FROM [ruby](https://hub.docker.com/_/ruby/), etc.).  Alpine linux (FROM alpine) is generally a safe bet for a generic image to start from.  It is a very slimmed down distribution of linux intended for use in Docker containers.  A best practice is to specify a version tag on an image to build from, e.g. ```FROM alpine:3.7``` because otherwise you are at the mercy of whatever the latest tag gets updated to point to, which might change something unexpectedly.
 
-2. RUN <linux command>
-This runs a linux command, the results of which then become part of your image.  So ```RUN mkdir /var/www/html/res``` will create the specified directory within the container.  ```RUN apt-get install vim``` would install the greatest text editor in the universe onto a Ubuntu-based image.  As noted in the aside above, keep an eye out for the opportunity to combine RUN commands to reduce the number of layers required to build your image and reduce its size.
+2. ```RUN <linux command>``` - This runs a linux command, the results of which then become part of your image.  So ```RUN mkdir /var/www/html/res``` will create the specified directory within the container.  ```RUN apt-get install vim``` would install the greatest text editor in the universe onto a Ubuntu-based image.  As noted in the aside above, keep an eye out for the opportunity to combine RUN commands to reduce the number of layers required to build your image and reduce its size.
 
-3. ADD <file on host> <location in container to put it>
-The ADD command lets you copy files from your host OS into the container.  This is really useful for getting assets, configuration or properties files, shell scripts, or indeed your artifact itself (e.g. your Spring Boot JAR) into the container.
+3. ```ADD <file on host> <location in container to put it>``` - The ADD command lets you copy files from your host OS into the container.  This is really useful for getting assets, configuration or properties files, shell scripts, or indeed your artifact itself (e.g. your Spring Boot JAR) into the container.  For example, ```ADD money-maker.jar /``` would add this wonderful app to the root folder of the container. 
 
-4. ENV
-5. EXPOSE
-6. CMD
+4. ```ENV <environment variable> <value>``` - This command sets an environment variable on the container to the specified value.  For example, ```ENV GITHUB_REPO https://github.com/ghostandgrey/docker-lab``` It should be noted that this can be overridden when running the container.  So for instance, even with the GITHUB_REPO being set to that, we could override it using the -e flag: ```docker run -e "GITHUB_REPO=https://github.com/evil-impostor-repo"```.  This is exactly what we did earlier with the Docker game.  The image already had an environment variable specifying that the first theme should be used, but we overrode it to use the second one.
 
+5. ```EXPOSE <port number>``` - The EXPOSE command exposes a port from inside the Docker container to the host OS.  Because of namespacing, containers have their entire own series of ports which are not by default accessible from the host OS or beyond.  If you are running Jenkins in a container on port 8080, then hitting http://localhost:8080 will not hit the container.  We'll see how to set this sort of thing up in a bit.
 
+6. ```CMD ["<linux command>"]``` - This runs a linux command, like the RUN command.  However, this linux command is executed when the container is started.  So it could be the command to start your app.  For a lot of the linux images, e.g. alpine, this command will typically be ```/bin/sh```, meaning that the container is just running a shell at start-up. 
 
+So let's try to read the Dockerfile for wearebigchill again in light of our understanding of these commands.
+
+```FROM fedora:22
+   
+   RUN dnf install -y httpd                      Use fedora's package manager to install httpd without requiring input.
+   RUN mkdir /var/www/html/res && \              Create these three folders 
+       mkdir /theme1 && \
+       mkdir /theme2
+   ADD httpd.conf /etc/httpd/conf/httpd.conf     Copy our httpd.conf file into the appropriate place in the container for httpd to use.
+   ADD publish/html5/theme1/* /theme1/           Copy all of our theme1 assets into the container.
+   ADD publish/html5/theme2/* /theme2/           Copy all of our theme2 assets into the container.
+   ADD publish/html5/game.min.js /var/www/html/  Copy the JavaScript for the game into the container.
+   ADD publish/html5/index.html /var/www/html/   Copy the HTML for the game page into the container.
+   ADD publish/html5/project.json /var/www/html/ Copy the game's configuration settings into the container.
+   ADD start.sh /                                Copy the script responsible for starting the httpd server into the container.
+   ENV THEME 1                                   Set the THEME environment variable to a value of 1.
+
+   EXPOSE 80                                     Open up port 80 so that the host OS can see it.
+
+   CMD ["/start.sh"]                             Set the container to execute the start.sh script when it starts up.
+```
+Hopefully it makes more sense now how the Dockerfile defines an image, and leads to your running container!
 
 ---
 ## 6. Exploring Containers
