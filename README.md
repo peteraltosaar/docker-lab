@@ -107,6 +107,56 @@ So what is going on here?  Some interesting things to note:
 4. The ID for the final container -- what you actually want out of this whole process -- is displayed at the end: ```Successfully built 49aee06e8e38```.  We will learn about how to give images more human-friendly names later.
 
 ---
+## 5. So Where Do Images Come From Anyway?
+
+Dockerfiles!
+
+If you open the Dockerfile inside of the ```wearebigchill``` directory, it looks like the following:
+```FROM fedora:22
+   
+   RUN dnf install -y httpd
+   RUN mkdir /var/www/html/res && \
+       mkdir /theme1 && \
+       mkdir /theme2
+   ADD httpd.conf /etc/httpd/conf/httpd.conf
+   ADD publish/html5/theme1/* /theme1/
+   ADD publish/html5/theme2/* /theme2/
+   ADD publish/html5/game.min.js /var/www/html/
+   ADD publish/html5/index.html /var/www/html/
+   ADD publish/html5/project.json /var/www/html/
+   ADD start.sh /
+   ENV THEME 1
+
+   EXPOSE 80
+
+   CMD ["/start.sh"]
+```
+If you look back at the output of the docker build process in the wearebigchill folder [here](/outputs/wearebigchill-docker-build-output.txt) you should see some striking similarities between the Dockerfile and that output.
+
+### An aside
+Every Docker command (RUN, ADD, ENV, etc.) results in an additional layer being added to your image.  Certainly at our level of Docker it's not as critical to be hyper vigilant, but in general it is a best practice to reduce the number of commands/layers that go into your Dockerfiles/images.  One way to do this can be observed above where the second RUN command actually uses linux's ability to chain different command line invocations into the same command.  That command COULD be:
+```
+RUN mkdir /var/www/html/res 
+RUN mkdir /theme1
+RUN mkdir /theme2
+```
+...but this is discouraged because a new layer will be added for each separate RUN command and this makes your resulting images larger.  This in turn is undesirable because it means more bandwidth is required to download and deploy your Docker images to servers or anywhere else.
+
+- [ ] Add in information about multi-stage builds here?
+
+### Back to our regularly scheduled programming...
+Dockerfiles consist of COMMANDS and the content for said COMMANDS, in the format ```<COMMAND> <CONTENT>```
+In this particular file, there are 6 different types of commands:
+1. FROM
+2. RUN
+3. ADD
+4. ENV
+5. EXPOSE
+6. CMD
+
+
+
+---
 ## 6. Exploring Containers
 
 Docker allows you to execute arbitrary commands inside of already-running containers.  This can be useful for debugging containers, but is generally frowned upon for production purposes.  It is considered a best practice that 
