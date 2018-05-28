@@ -182,7 +182,7 @@ So let's try to read the Dockerfile for wearebigchill again in light of our unde
 
    CMD ["/start.sh"]                             Set the container to execute the start.sh script when it starts up.
 ```
-Hopefully it makes more sense now how the Dockerfile defines an image, and leads to your running container!
+Hopefully it makes more sense now how the Dockerfile defines an image, and leads to your running container!  Hopefully you are starting to get a sense of how you could combine these (and oh so many other Dockerfile commands) to create a variety of different containers to suit your purposes.
 
 ---
 ## 6. Exploring Containers
