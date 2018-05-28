@@ -145,14 +145,22 @@ RUN mkdir /theme2
 - [ ] Add in information about multi-stage builds here?
 
 ### Back to our regularly scheduled programming...
-Dockerfiles consist of COMMANDS and the content for said COMMANDS, in the format ```<COMMAND> <CONTENT>```
+Dockerfiles consist of commands and the content for said commands, in the format ```<COMMAND> <CONTENT>```
 In this particular file, there are 6 different types of commands:
-1. FROM
-2. RUN
-3. ADD
+
+1. FROM <image>
+This instructs Docker what image to use as a start.  Depending on your needs, you could, for instance, start with different flavours    of linux (FROM [alpine](https://hub.docker.com/_/alpine/), FROM [centos](https://hub.docker.com/_/centos/), FROM [debian](https://hub.docker.com/_/debian/), etc.), or start with an image that already has some kind of runtime or technology that you want your container to feature (FROM [openjdk](https://hub.docker.com/_/openjdk/), FROM [python](https://hub.docker.com/_/python/), FROM [ruby](https://hub.docker.com/_/ruby/), etc.).  Alpine linux (FROM alpine) is generally a safe bet for a generic image to start from.  It is a very slimmed down distribution of linux intended for use in Docker containers.  A best practice is to specify a version tag on an image to build from, e.g. ```FROM alpine:3.7``` because otherwise you are at the mercy of whatever the latest tag gets updated to point to, which might change something unexpectedly.
+
+2. RUN <linux command>
+This runs a linux command, the results of which then become part of your image.  So ```RUN mkdir /var/www/html/res``` will create the specified directory within the container.  ```RUN apt-get install vim``` would install the greatest text editor in the universe onto a Ubuntu-based image.  As noted in the aside above, keep an eye out for the opportunity to combine RUN commands to reduce the number of layers required to build your image and reduce its size.
+
+3. ADD <file on host> <location in container to put it>
+The ADD command lets you copy files from your host OS into the container.  This is really useful for getting assets, configuration or properties files, shell scripts, or indeed your artifact itself (e.g. your Spring Boot JAR) into the container.
+
 4. ENV
 5. EXPOSE
 6. CMD
+
 
 
 
