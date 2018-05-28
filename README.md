@@ -157,6 +157,7 @@ This instructs Docker what image to use as a start.  Depending on your needs, yo
 
 4. ```ENV <environment variable> <value>``` - This command sets an environment variable on the container to the specified value.  For example, ```ENV GITHUB_REPO https://github.com/ghostandgrey/docker-lab``` It should be noted that this can be overridden when running the container.  So for instance, even with the GITHUB_REPO being set to that, we could override it using the -e flag: ```docker run -e "GITHUB_REPO=https://github.com/evil-impostor-repo"```.  This is exactly what we did earlier with the Docker game.  The image already had an environment variable specifying that the first theme should be used, but we overrode it to use the second one.
 
+[ ] UPDATE THIS
 5. ```EXPOSE <port number>``` - The EXPOSE command exposes a port from inside the Docker container to the host OS.  Because of namespacing, containers have their entire own series of ports which are not by default accessible from the host OS or beyond.  If you are running Jenkins in a container on port 8080, then hitting http://localhost:8080 will not hit the container.  We'll see how to set this sort of thing up in a bit.
 
 6. ```CMD ["<linux command>"]``` - This runs a linux command, like the RUN command.  However, this linux command is executed when the container is started.  So it could be the command to start your app.  For a lot of the linux images, e.g. alpine, this command will typically be ```/bin/sh```, meaning that the container is just running a shell at start-up. 
@@ -207,5 +208,43 @@ REPOSITORY           TAG                                        IMAGE ID        
 <none>               <none>                                     49aee06e8e38        26 hours ago        355MB
 ```
 So after ensuring that the container is running, type in ```docker ps```.  You should see something like the following output:
+```
+docker ps
+CONTAINER ID   IMAGE         COMMAND      CREATED             STATUS              PORTS                     NAMES
+c6a4cefa06ad   49aee06e8e38  "/start.sh"  24 hours ago        Up 21 hours         0.0.0.0:8090->80/tcp      loving_rosalind
+```
 
+### An aside
+```loving_rosalind```??  If you do not specify a name for a docker container (we'll see how to do this in a bit) then Docker will come up with a name for it, combining an adjective and a prominent technological/scientific pioneer
+https://github.com/moby/moby/blob/master/pkg/namesgenerator/names-generator.go
+
+- ps-a
+- logs
+- sshing in
+- removing containers
 Docker allows you to execute arbitrary commands inside of already-running containers.  This can be useful for debugging containers, but is generally frowned upon for production purposes.  It is considered best practice to have your container in its final state 
+
+---
+## 7. Volumes
+- Demonstrate persistence
+- https://hub.docker.com/r/binocarlos/hello-increment/
+
+---
+## 8. Ports
+- EXPOSE command in more detail
+- host vs. container ports
+- ephemeral ports when none are specified
+
+---
+## 9. Networking
+- Find good, simple example of networking containers.'
+- https://docs.docker.com/network/network-tutorial-standalone/
+
+
+---
+## 10. Docker Compose
+- https://docs.docker.com/compose/wordpress/#define-the-project
+
+---
+## 11. Creating Images / Uploading to Docker Hub
+- 
