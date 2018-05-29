@@ -142,8 +142,6 @@ RUN mkdir /theme2
 ```
 ...but this is discouraged because a new layer will be added for each separate RUN command and this makes your resulting images larger.  This in turn is undesirable because it means more bandwidth is required to download and deploy your Docker images to servers or anywhere else.
 
-- [ ] Add in information about multi-stage builds here?
-
 ### Back to our regularly scheduled programming...
 Dockerfiles consist of commands and the content for said commands, in the format ```<COMMAND> <CONTENT>```
 In this particular file, there are 6 different types of commands:
@@ -504,3 +502,6 @@ Imagine the possibilities that this kind of capability can have for, for instanc
 3. Vadim, David Jones, Caleb, and BC all have real-world experience with Docker and container orchestration.  If you want to learn about experiences with using Docker "for real", they are good people to talk to.
 
 4. The DevOps CoE.  We have a slack channel ```#dev-ops-coe``` and would be more than happy to talk all things Docker with you!
+
+## 13. Todos
+[ ] Talk about multi-stage builds.
