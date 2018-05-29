@@ -323,14 +323,42 @@ The -it (combination of -i and -t flags) flag stands for "interactive, terminal"
 
 ---
 ## 7. Volumes
-Let's observe something interesting about Docker.  Let's use the ```hello-increment``` image found =[here](https://hub.docker.com/r/binocarlos/hello-increment/).
+One thing that we have not touched on until now is the ephemeral nature of containers.  This is to say, that they do not persist data beyond their lifespans by default.  What this means, is that if you have data accumulating in a container, and Docker itself goes down, or your system reboots for whatever reason, you will lose all state in a container!  This would be devastating for apps that depend on persisted state, such as Jenkins, which stores all of its data on the local filesystem, rather than in, say, a DB.  Speaking of databases... if you have a database in a container, then if that container is removed, by default you would lose all the data in your database.  This would really defeat the purpose.
 
-Let's run it: ```docker run -d -p 10000:80 --name hello-increment binocarlos/hello-increment```
-You can now hit [http://localhost:10000](http://localhost:10000) to... increment a number.  Keep refreshing the page to continue incrementing the number.  For some reason it doesn't even increment by 1.  I have no idea why.
+So how do we deal with the ephemerality of containers?  Volumes!  Volumes let you bind files and directories between containers and the host OS.  So you could for instance bind the ```/var/data/``` directory inside of a container to your host OS directory ```~/docker_data```.  Any files created and updated inside of ```/var/data/``` inside the container would actually appear identically in your ```~/docker_data``` directory.  Let's see this in action.
 
-Let's now stop the container: ```docker stop hello-increment```.
+Let's use the ```hello-increment``` image found =[here](https://hub.docker.com/r/binocarlos/hello-increment/).
 
-Let's now re-start the container: ```docker start hello-increment```.  What would we expect the accumulated number displayed at localhost:10000 to be?  Same as last time?
+Let's run it: ```docker run -d -p 10000:80 --name hello-increment binocarlos/hello-increment```.
+
+You can now hit [http://localhost:10000](http://localhost:10000) to... increment a number.  Very exciting.
+
+Let's now stop and remove the container to simulate either Docker going down or your system turning off and on again.  When either of these happen, all container state is lost.
+
+```docker stop hello-increment```
+```docker rm hello-increment```
+
+Now let's restart the app: ```docker run -d -p 10000:80 --name hello-increment binocarlos/hello-increment```.  When hitting [http://localhost:10000](http://localhost:10000) again, you will notice that the counter has restarted from 1.  This is another obviously contrived example, but can you imagine how annoying it would be to lose Jenkins build history every time you have to reboot a system?  Let's see how volumes help us solve this problem.
+
+Let's again stop and remove the container to simulate some system failure:
+
+```docker stop hello-increment```
+```docker rm hello-increment```
+
+Let's run the app again, but this time specifying a volume: 
+```docker run -d -p 10000:80 -v ~/docker_data:/tmp --name hello-increment binocarlos/hello-increment```
+We are binding the ```~/docker_data``` folder on our host OS to the ```/tmp``` folder in the container.  Docker will create the host OS folder if it does not exist.
+
+Navigate to your ```~/docker_data``` directory.  Note that it is empty at this time.
+
+You can now hit [http://localhost:10000](http://localhost:10000).  Re-list the contents of your ```~/docker_data``` directory.  You will now see a ```helloincrement.txt``` file.  If you ```cat helloincrement.txt``` it will output "2".  Keep refreshing the page to continue incrementing the number.  For some reason it doesn't even increment by 1.  It looks as if it sends odd numbers to the web client, and stores even numbers in the file.  If you re-cat the helloincrement.txt file, you will see the number inside it also increasing.
+
+Let's now stop and remove the container one last time: 
+
+```docker stop hello-increment```
+```docker rm hello-increment```
+
+Let's run it one last time, pointing to the same directory we used last time: ```docker run -d -p 10000:80 -v ~/docker_data:/tmp --name hello-increment binocarlos/hello-increment```.  When hitting [http://localhost:10000](http://localhost:10000) again, you will notice that the number has actually picked up from where it last left off.  For apps requiring persistence (Jenkins, DBs, etc.) Docker volumes are a lifesaver.
 
 ---
 ## 8. Ports
