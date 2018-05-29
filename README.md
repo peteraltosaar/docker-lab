@@ -200,6 +200,13 @@ ea99ba7b96d3        6 days ago          /bin/sh -c apk --no-cache add ca-certifi
 ## 6. Creating Images
 - 
 
+Download the jar file located [here](https://www.dropbox.com/s/cmh87m1rvo39nvz/mtdan-1.0-SNAPSHOT.jar?dl=0) to a directory other than the wearebigchill one we've been in this whole time.  Let's pretend that it is your project's deployable artifact, and not the steaming pile of garbage that it is. (FYI - It is safe but I assure you it is garbage.  Mike and I hacked this thing together last night for illustrative purposes.).  It is a Spring Boot jar.  If you like, you can run it to see what it does (```java -jar mtdan-1.0-SNAPSHOT.jar```).  You can hit it at [localhost:8080](http://localhost:8080).  It should say  "Who are you?"  This is because it looks for a name under the YOUR_NAME environment variable, which I'm thinking is a safe bet to not be defined on anybody's computer.  Let's get this thing running in Docker!
+
+Step 1.  The Dockerfile.
+
+
+
+
 
 ---
 ## 7. Exploring Containers
