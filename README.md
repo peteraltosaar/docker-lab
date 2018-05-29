@@ -334,9 +334,11 @@ Let's now re-start the container: ```docker start hello-increment```.  What woul
 
 ---
 ## 8. Ports
-- EXPOSE command in more detail
-- host vs. container ports
-- ephemeral ports when none are specified
+So you have been taking on faith the use of the -p flag so far.  Let's clarify a few things about it.  -p stands for "port", and allows you to configure port mappings between the host OS and containers.  It takes the form of ```-p <host port>:<container port>```.  Docker ports are not actually exposed to the outside world by default.  So even if you have a webserver in a container listening on port 80, by default, you will not be able to access this, even from port 80 on your host OS (e.g. http://localhost:8080).  In order to do this, we need to tell Docker which host OS ports point to which container ports.  
+
+So when we run the command ```docker run -p 10000:80 --name hello-increment binocarlos/hello-increment```, we are telling Docker that any traffic hitting http://localhost:10000 should be forwarded into this container, at port 80, presumably to some webserver sitting there, listening there.  
+
+We have talked about the EXPOSE command and how it is often used as a form of documentation for users of the image.  However, you CAN use the -P flag (a capital P) when running a container, to have Docker assign an ephemeral port to any exposed ports (higher than 32768).  It is not clear to me at this time why you would ever want a random port number and not a fixed one.
 
 ---
 ## 9. Networking
