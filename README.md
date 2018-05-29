@@ -218,7 +218,7 @@ The first line is going to be ```FROM <base image you have decided upon>```.
 </details>
 <br/>
     
-3. Finally, we want the spring boot jar with its embedded Tomcat server to start whenever the container starts.  This is achieved with the CMD command.  There are a few different syntaxes for this, but the most common one I've seen is called "exec form".  More details on it can be found [here](https://docs.docker.com/engine/reference/builder/#cmd).  It requires that whatever linux command you want to run is an array of Strings, delineated by spaces.  So for instance, if you wanted to run ```ps -aux```, this would actually be ```["ps", "-aux"].  In light of this, try and figure out how you would input the ```java -jar /mtdan-1.0-SNAPSHOT.jar``` command.  
+3. Finally, we want the spring boot jar with its embedded Tomcat server to start whenever the container starts.  This is achieved with the CMD command.  There are a few different syntaxes for this, but the most common one I've seen is called "exec form".  More details on it can be found [here](https://docs.docker.com/engine/reference/builder/#cmd).  It requires that whatever linux command you want to run is an array of Strings, delineated by spaces.  So for instance, if you wanted to run ```ps -aux```, this would actually be ```["ps", "-aux"]```.  In light of this, try and figure out how you would input the ```java -jar /mtdan-1.0-SNAPSHOT.jar``` command.  
 <details>
  <summary>The answer is here</summary>
  CMD ["java", "-jar", "/mtdan-1.0-SNAPSHOT.jar"]
