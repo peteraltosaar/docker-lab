@@ -226,12 +226,40 @@ The first line is going to be ```FROM <base image you have decided upon>```.
 
 <details>
  <summary>Here is what your Dockerfile should currently look like</summary>
- FROM openjdk
- COPY mtdan-1.0-SNAPSHOT.jar /
- CMD ["java", "-jar", "/mtdan-1.0-SNAPSHOT.jar"]
+ FROM openjdk<br/>
+ COPY mtdan-1.0-SNAPSHOT.jar /<br/>
+ CMD ["java", "-jar", "/mtdan-1.0-SNAPSHOT.jar"]<br/>
 </details>
 
+Step 2: Build the image
+We are now going to build the image defined by our Dockerfile.  Run this command: ```docker build -t hello:1.0 .``` The -t flag is short for "tag", and allows us to tag our image with a name and a version.  This makes it easier to refer to the image and to keep track of different versions of it.  The version could correspond to one's Jenkins build number, for instance, so that it is very clear from whence any given Docker image came.
 
+You can now view the image by running ```docker images```.  Congratulations on building your first image.  Isn't it magnificent?
+
+Step 3: Run the container
+Okay, let's run this sucker now.  We'll see more detail about the -p and --name flags in a bit but just use them in good faith for now.  -p is for assigning ports.  --name... names your container: ```docker run -p 20000:8080 --name hello1 hello:1.0```.  
+
+If you run ```docker ps``` you should now see ```hello1``` as one of your running containers!
+
+Go to [http://localhost:20000](http://localhost:20000) and you should see the same "Who are you?" message.  We haven't defined the YOUR_NAME environment variable!
+
+There are two ways to do this, and I'll leave it up to you to do which one you want.  You could update the Dockerfile so that it is part of the image (```ENV YOUR_NAME _______```), or you can merely pass it in with a -e flag: ```docker run -e "YOUR_NAME=_______"```.
+
+<details>
+ <summary>Click here if you want to see what the Dockerfile should look like</summary>
+ FROM openjdk<br/>
+ COPY mtdan-1.0-SNAPSHOT.jar /<br/>
+ ENV YOUR_NAME <your name><br/>
+ CMD ["java", "-jar", "/mtdan-1.0-SNAPSHOT.jar"]<br/>
+</details>
+<details>
+ <summary>Or click here if you want to see what the command line invocation should look like</summary>
+ docker run -d -p 20000:8080 --name hello1 -e "YOUR_NAME=<your name>" hello:1.0
+</details>
+
+Be sure you stop the previous running container before starting the new one, or make sure it is on a port other than 20000 or else it's not going to work.  You should now see a very affirming message about your coolness when you hit [http://localhost:20000](http://localhost:20000).
+
+Obviously this example is a bit contrived, but is it really so much a stretch to build a much more sophisticated app into a jar and be able to get it into an image this way?  We now no longer need any dependencies or runtimes other than Docker on whatever system we want our apps to run on.  This really begins to shine when you start using Docker with orchestration tools that can spin up servers with your docker containers constantly.  It's a thing of beauty.
 
 ---
 ## 7. Exploring Containers
