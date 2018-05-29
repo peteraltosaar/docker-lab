@@ -495,11 +495,12 @@ After you have been suitably impressed by this marvel of modern software enginee
 Imagine the possibilities that this kind of capability can have for, for instance, testers.  They could spin up an instance of your app with a database with test data in it with a single command!  The possibilities are pretty much endless.
 
 ---
-## 11: Resources
+## 11. Resources
 
 1. Honestly, the number one best resource for all things docker-related is the "Dockermentation", [the official documentation](https://docs.docker.com/) that Docker itself puts out.  It has a wealth of information, is incredibly comprehensive and thorough, includes further tutorials, and even has a toggle to switch between daytime and nighttime modes (light vs. dark backgrounds)!
 
 2. Docker offers some seriously robust tutorials [here](https://docs.docker.com/samples/).  Of particular interest is the "Docker for Java Developers" tutorial it offers [here](https://github.com/docker/labs/tree/master/developer-tools/java/).  
 
 3. Vadim, David Jones, Caleb, and BC all have real-world experience with Docker and container orchestration.  If you want to learn about experiences with using Docker "for real", they are good people to talk to.
-I haven't had the opportunity to go through it myself,
+
+4. The DevOps CoE.  We have a slack channel ```#dev-ops-coe``` and would be more than happy to talk all things Docker with you!
