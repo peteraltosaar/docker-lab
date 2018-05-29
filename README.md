@@ -61,13 +61,17 @@ Here is the URL for the Docker Hub page for the hello-world image (this page is 
 ---
 ## 3. A Taste of the Power of Docker
 1. Run the following command to clone the specified git repo to your local host:
+
 ```git clone https://github.com/spkane/wearebigchill.git --config core.autocrlf=input```
+
+**Please note that it is important to have the bit about the --config core.autocrlf=input on Windows!**
+
 2. Change into the new folder: ```cd wearebigchill```
 3. Build the Docker image: ```docker build .```
    [Click here](/outputs/wearebigchill-docker-build-output.txt) for the output that you ought to be seeing from this command.
    The output will end with the following line: ```Successfully built 49aee06e8e38```. Your image id will differ from ```49aee06e8e38```.  You will need this id for the next command.
 4. Run the docker image: ```docker run -p 8090:80 <image ID from previous step>```.
-5. Go to [http://localhost:8090](http://localhost:8090) in your browser and try the game out for a spin.  Try not to mind the very suspect physics.  
+5. Go to [http://localhost:8090](http://localhost:8090) in your browser and try the game out for a spin.  Try not to mind the very suspect physics.  **Please note that the 404 error page is the title screen for a game and not an error page**.
 6. Admire how dead simple it actually was to start up a web server that serves up this "game".  
 7. Go back to your terminal and hit ```ctrl+c``` to stop the container.
 8. Restart the container, this time specifying an environment variable (more on this in a bit): ```docker run -p 8090:80 -e "THEME=2" <same image ID>```
@@ -309,7 +313,7 @@ Default:
 This should produce the output we have already seen.
 
 Detached:
-```docker run --name hello-world hello-world``` (Please note we do not want the --rm flag because we want the container to stick around after it completes its task.)
+```docker run -d --name hello-world hello-world``` (Please note we do not want the --rm flag because we want the container to stick around after it completes its task.)
 This command should produce no output to your terminal.  We can instead see the output by invoking ```docker logs hello-world```.  You can tail ongoing output from a container similarly to how it is done in linux, with the -f flag (short for "follow").  You will find that being able to view the "logs" of your container to be very helpful for debugging purposes.
 
 ### SSHing Into Your Containers
