@@ -205,6 +205,7 @@ Step 1: The Dockerfile.
  <summary>If nothing is jumping out at you in the first few pages, click on this line for our recommendation</summary>
  openjdk (Don't worry about a specific tag/version for this exercise.)
 </details>
+<br/>
   
 Use your favourite editor to create a file in the same directory as the downloaded jar, naming this file ```Dockerfile``` (no extension).
 The first line is going to be ```FROM <base image you have decided upon>```.
@@ -215,12 +216,14 @@ The first line is going to be ```FROM <base image you have decided upon>```.
  <summary>Click here if you want to see what this line should look like</summary>
  COPY mtdan-1.0-SNAPSHOT.jar /
 </details>
+<br/>
     
 3. Finally, we want the spring boot jar with its embedded Tomcat server to start whenever the container starts.  This is achieved with the CMD command.  There are a few different syntaxes for this, but the most common one I've seen is called "exec form".  More details on it can be found [here](https://docs.docker.com/engine/reference/builder/#cmd).  It requires that whatever linux command you want to run is an array of Strings, delineated by spaces.  So for instance, if you wanted to run ```ps -aux```, this would actually be ```["ps", "-aux"].  In light of this, try and figure out how you would input the ```java -jar /mtdan-1.0-SNAPSHOT.jar``` command.  
 <details>
  <summary>The answer is here</summary>
  CMD ["java", "-jar", "/mtdan-1.0-SNAPSHOT.jar"]
 </details>
+<br/>
 
 <details>
  <summary>Here is what your Dockerfile should currently look like</summary>
@@ -228,6 +231,7 @@ The first line is going to be ```FROM <base image you have decided upon>```.
  COPY mtdan-1.0-SNAPSHOT.jar /<br/>
  CMD ["java", "-jar", "/mtdan-1.0-SNAPSHOT.jar"]<br/>
 </details>
+<br/>
 
 Step 2: Build the image
 We are now going to build the image defined by our Dockerfile.  Run this command: ```docker build -t hello:1.0 .``` The -t flag is short for "tag", and allows us to tag our image with a name and a version.  This makes it easier to refer to the image and to keep track of different versions of it.  The version could correspond to one's Jenkins build number, for instance, so that it is very clear from whence any given Docker image came.
