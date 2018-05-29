@@ -322,7 +322,7 @@ Perhaps one of the most practical EXEC commands to run is /bin/bash, which when 
 The -it (combination of -i and -t flags) flag stands for "interactive, terminal", and attaches the command to your current terminal.  The command we are invoking inside of the container is a bash shell, and we are hooking it up to our host OS terminal.  You can now navigate throughout your container as you would any other OS!  Again, this is generally frowned upon for production purposes, but can be incredibly useful for debugging.
 
 ---
-## 7. Volumes
+## 8. Volumes
 One thing that we have not touched on until now is the ephemeral nature of containers.  This is to say, that they do not persist data beyond their lifespans by default.  What this means, is that if you have data accumulating in a container, and Docker itself goes down, or your system reboots for whatever reason, you will lose all state in a container!  This would be devastating for apps that depend on persisted state, such as Jenkins, which stores all of its data on the local filesystem, rather than in, say, a DB.  Speaking of databases... if you have a database in a container, then if that container is removed, by default you would lose all the data in your database.  This would really defeat the purpose.
 
 So how do we deal with the ephemerality of containers?  Volumes!  Volumes let you bind files and directories between containers and the host OS.  So you could for instance bind the ```/var/data/``` directory inside of a container to your host OS directory ```~/docker_data```.  Any files created and updated inside of ```/var/data/``` inside the container would actually appear identically in your ```~/docker_data``` directory.  Let's see this in action.
@@ -438,8 +438,65 @@ We have placed both the mysql container and the wordpress container on the same 
 
 Well congratulations, because you now have a working instance of Wordpress, with persistence!  Go check it out at [http://localhost:8000](http://localhost:8000)!
 
+To confirm it is using our mysql container, you could list the contents of the host OS data directory: ```ls ~/db_data```.  You will see a series of mysql files.
+
 ---
 ## 10. Docker Compose
-- https://docs.docker.com/compose/wordpress/#define-the-project
 
+So in the previous section we created a working instance of Wordpress with a handful of commands and two Dockerfiles.  Pretty cool if you ask me.  But can we do better?  
 
+Judging by me having asked this question, I'm sure you've figured out that the answer is "yes".
+
+Here I will leave you with just a taste of the power of container orchestration.  We will see the Docker Compose tool at work.  This is not a production-grade tool but is fantastic for developers and QAs using docker in their local environments.
+
+While Docker itself looks at Dockerfiles as sequential imperatives, Docker Compose works more in a declarative fashion.  That is rather than telling it exactly what to do step by step to achieve your desired outcome, you describe your desired state, and let Docker Compose how to make it happen.  As a demo of this, copy the following into a file called docker-compose.yaml:
+
+```
+version: '3.3'
+
+services:
+   db:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+   wordpress:
+     depends_on:
+       - db
+     image: wordpress:latest
+     ports:
+       - "9000:80"
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+volumes:
+    db_data:
+```
+It is specifying two "services", which should be thought of more as capabilities or contracts, rather than a specific container.  For instance, while the ```db``` service is backed by a mysql container, the service encapsulates more than just the container, such as the ```restart: always``` property, which instructs this container to always restart if it ever goes down for whatever reason.  
+
+Rather than building up an image layer by layer, we tell docker-compose that we would like two services.  We would like the first service to use a volume called ```db_data```.  We want the container to always restart if it goes down.  We want it to have 4 environment variables with the specified values.
+
+Similarly, with the wordpress service, we want it to also always restart if it goes down, and to have three environment variables.  Additionally, we want host OS traffic going to port 8000 to arrive at port 80 in the container.  Furthermore, by specifying ```depends_on: -db``` we are telling docker-compose that the ```db``` service must be up and running before running this one.  
+
+Finally, we also tell docker-compose that we would like a data volume, by the name of db_data.
+
+Now for the magic:  Run the following command: ```docker-compose up -d``` and behold, as you have a running instance of Wordpress with a single command!
+
+After you have been suitably impressed by this marvel of modern software engineering, you can turn it off with the following command: ```docker-compose down```, as long as you are in the same directory where you ran ```docker-compose up -d```.
+
+Imagine the possibilities that this kind of capability can have for, for instance, testers.  They could spin up an instance of your app with a database with test data in it with a single command!  The possibilities are pretty much endless.
+
+---
+## 11: Resources
+
+1. Honestly, the number one best resource for all things docker-related is the "Dockermentation", [the official documentation](https://docs.docker.com/) that Docker itself puts out.  It has a wealth of information, is incredibly comprehensive and thorough, includes further tutorials, and even has a toggle to switch between daytime and nighttime modes (light vs. dark backgrounds)!
+
+2. I haven't had the opportunity to go through it myself,
