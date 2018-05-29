@@ -370,9 +370,73 @@ We have talked about the EXPOSE command and how it is often used as a form of do
 
 ---
 ## 9. Networking
-- Find good, simple example of networking containers.'
-- https://docs.docker.com/network/network-tutorial-standalone/
+Among the bazillion other features Docker has, it also offers container-to-container networking.  
 
+Type in ```docker network ls```.  This will list all Docker networks you currently have on your system.  Unless you have created them for other labs, you should only see three, named ```bridge```, ```host```, and ```none```.  By default, all Docker containers are placed on the ```bridge``` network.  This means that they can see and communicate with each other via this network.  In general, it is good practice to have specific-purpose networks for networked containers, to minimize noise and collisions.  So let's create one now.  
+
+```docker network create wordpress```.  This will create a new bridge network called "wordpress".  Bridge networks are the default type.  For information on the host and the null-type networks (named none), refer to the Docker documentation.
+
+Let's now get some containers talking to each other via this network.  Hmm... What would be a good candidate for this?  Wordpress!
+Wordpress requires a database.  Mysql will do.  Normally, provisioning a database is a fate I would not wish for even my worst enemy, but Docker makes it simple!
+
+Create a new folder, called mysql and copy the following into a Dockerfile within it:
+```
+FROM mysql:5.7
+ENV MYSQL_ROOT_PASSWORD somewordpress
+ENV MYSQL_DATABASE wordpress
+ENV MYSQL_USER wordpress
+ENV MYSQL_PASSWORD wordpress
+```
+This code uses an image with mysql already on it, and sets a bunch of environment variables used by mysql.
+
+Save it and then let's create an image from it: ```docker build -t my_mysql:1.0 .```
+
+Confirm that it has been created by finding it with ```docker images```.
+
+Let's run it: ```docker run -d -v ~/db_data:/var/lib/mysql --network wordpress --name mysql my_mysql:1.0```.  Note that we do not need to specify anything about port mapping, because nothing from the outside world is going to need to access this DB directly - only the wordpress container.
+
+We can confirm it is on the wordpress network using the ```docker inspect <container_reference>``` command like so: ```docker inspect mysql```.  This command outputs a bunch of information about the specified container in JSON format.  You should see something close to this toward the bottom of the output: 
+```
+"Networks": {
+                "wordpress": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "a97529e3f9b2"
+                    ],
+                    "NetworkID": "0e4af0d12392ff4b09530fe231910e016c6d6c5e4eb1249fbd4b5b122dd7595d",
+                    "EndpointID": "deeec28ccd20e769167c319de5acc8ed0497f760ac0ecf600c5eeab6498e7505",
+                    "Gateway": "172.21.0.1",
+                    "IPAddress": "172.21.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:15:00:02",
+                    "DriverOpts": null
+                }
+            }
+```
+You can see what the containers IP address is.  It is 172.21.0.2 in this case.
+
+So now we have a full-blown instance of Mysql running.  Let's set up a Wordpress instance to take advantage of it!
+
+Create a different folder, called wordpress, and copy the following into a Dockerfile:
+```
+FROM wordpress:latest
+ENV WORDPRESS_DB_HOST mysql:3306
+ENV WORDPRESS_DB_USER wordpress
+ENV WORDPRESS_DB_PASSWORD wordpress
+```
+This Dockerfile starts the image off with wordpress on it, and sets some environment variables in order to be able to talk to the mysql database found in our other container.  One really cool thing to note here is ```WORDPRESS_DB_HOST``` being set to ```mysql:3306```.  You don't even need to specify the IP address of the mysql container.  You can just refer to its container name and Docker will do the rest for you!
+
+So let's build this image: ```docker build -t my_wordpress:1.0```.
+
+And let's run it as well: ```docker run -d -p 8000:80 --network wordpress --name wordpress my_wordpress:1.0```
+
+We have placed both the mysql container and the wordpress container on the same wordpress network.  They are able to communicate with each other, and can even refer to one another by container name, but they cannot talk to any other containers on any other networks.  Likewise, no containers on other networks can access these two.  
+
+Well congratulations, because you now have a working instance of Wordpress, with persistence!  Go check it out at [http://localhost:8000](http://localhost:8000)!
 
 ---
 ## 10. Docker Compose
