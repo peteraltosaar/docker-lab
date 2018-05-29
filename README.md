@@ -234,11 +234,13 @@ The first line is going to be ```FROM <base image you have decided upon>```.
 <br/>
 
 Step 2: Build the image
+
 We are now going to build the image defined by our Dockerfile.  Run this command: ```docker build -t hello:1.0 .``` The -t flag is short for "tag", and allows us to tag our image with a name and a version.  This makes it easier to refer to the image and to keep track of different versions of it.  The version could correspond to one's Jenkins build number, for instance, so that it is very clear from whence any given Docker image came.
 
 You can now view the image by running ```docker images```.  Congratulations on building your first image.  Isn't it magnificent?
 
 Step 3: Run the container
+
 Okay, let's run this sucker now.  We'll see more detail about the -p and --name flags in a bit but just use them in good faith for now.  -p is for assigning ports.  --name... names your container: ```docker run -p 20000:8080 --name hello1 hello:1.0```.  
 
 If you run ```docker ps``` you should now see ```hello1``` as one of your running containers!
@@ -254,10 +256,12 @@ There are two ways to do this, and I'll leave it up to you to do which one you w
  ENV YOUR_NAME <your name><br/>
  CMD ["java", "-jar", "/mtdan-1.0-SNAPSHOT.jar"]<br/>
 </details>
+ <br/>
 <details>
  <summary>Or click here if you want to see what the command line invocation should look like</summary>
  docker run -d -p 20000:8080 --name hello1 -e "YOUR_NAME=<your name>" hello:1.0
 </details>
+<br/>
 
 Be sure you stop the previous running container before starting the new one, or make sure it is on a port other than 20000 or else it's not going to work.  You should now see a very affirming message about your coolness when you hit [http://localhost:20000](http://localhost:20000).
 
@@ -282,7 +286,7 @@ c6a4cefa06ad   49aee06e8e38  "/start.sh"  24 hours ago        Up 21 hours       
 ```
 
 ### Container Names
-```loving_rosalind```??  If you do not specify a name for a docker container (we'll see how to do this in a bit) then Docker will come up with a name for it, combining an adjective and a prominent technological/scientific pioneer with an underscore.  You can actually look at the go code [here](https://github.com/moby/moby/blob/master/pkg/namesgenerator/names-generator.go) that generates these names.  Whoever wrote it apparently thinks Steve Wozniak is very interesting.
+```loving_rosalind```??  If you do not specify a name for a docker container then Docker will come up with a name for it, combining an adjective and a prominent technological/scientific pioneer with an underscore.  You can actually look at the go code [here](https://github.com/moby/moby/blob/master/pkg/namesgenerator/names-generator.go) that generates these names.  Whoever wrote it apparently thinks Steve Wozniak is very interesting.
 
 If you prefer your containers to have more meaningful names, then you can specify one when you first instantiate the container with the --name <container_name> flag.  So for instance, if we were to invoke ```docker run --name hello-world hello-world```, it would create an instance of the hello-world image and also call it "hello-world".  Naming containers is a good practice.  Not only does it make it easier to identify and differentiate your containers, you can also use their names to refer to them in commands.  So you could say ```docker inspect goodbye_world``` rather than ```docker inspect 151dae5a...blah blah blah```.
 
@@ -312,7 +316,9 @@ This command should produce no output to your terminal.  We can instead see the 
 Docker allows you to execute arbitrary commands inside of already-running containers.  It is considered best practice to have your container in its production-ready state right after being run -- requiring manual intervention to set up your containers properly really defeats the purpose of what Docker is trying to do.  Nevertheless, executing arbitrary commands can be useful for debugging containers.
 
 Let's make a nice, easily-referenceable version of the wearebigchill docker container for these next commands.  Change back into the wearebigchill directory.  
+
 Step 1: Run ```docker build --tag wearebigchill:1.0 .```
+
 Step 2: Run ```docker run -p 15000:80 --name wearebigchill wearebigchill:1.0```
 
 So to demonstrate executing commands inside containers run ```docker exec wearebigchill pwd```.  This will execute the ```pwd``` ,(present working directory) command inside of your container.  It will display ```/```, indicating that the present working directory in the container is the root folder.  Similarly, running ```docker exec wearebigchill ls``` will list the contents of your current directory.  The contents should look broadly familiar to anybody familiar with Linux.  The container has its entire own filesystem!
@@ -340,7 +346,9 @@ Let's now stop and remove the container to simulate either Docker going down or 
 ```docker stop hello-increment```
 ```docker rm hello-increment```
 
-Now let's restart the app: ```docker run -d -p 10000:80 --name hello-increment binocarlos/hello-increment```.  When hitting [http://localhost:10000](http://localhost:10000) again, you will notice that the counter has restarted from 1.  This is another obviously contrived example, but can you imagine how annoying it would be to lose Jenkins build history every time you have to reboot a system?  Let's see how volumes help us solve this problem.
+Now let's restart the app: ```docker run -d -p 10000:80 --name hello-increment binocarlos/hello-increment```.  
+
+When hitting [http://localhost:10000](http://localhost:10000) again, you will notice that the counter has restarted from 1.  This is another obviously contrived example, but can you imagine how annoying it would be to lose Jenkins build history every time you have to reboot a system?  Let's see how volumes help us solve this problem.
 
 Let's again stop and remove the container to simulate some system failure:
 
@@ -348,7 +356,9 @@ Let's again stop and remove the container to simulate some system failure:
 ```docker rm hello-increment```
 
 Let's run the app again, but this time specifying a volume: 
+
 ```docker run -d -p 10000:80 -v ~/docker_data:/tmp --name hello-increment binocarlos/hello-increment```
+
 We are binding the ```~/docker_data``` folder on our host OS to the ```/tmp``` folder in the container.  Docker will create the host OS folder if it does not exist.
 
 Navigate to your ```~/docker_data``` directory.  Note that it is empty at this time.
@@ -360,7 +370,11 @@ Let's now stop and remove the container one last time:
 ```docker stop hello-increment```
 ```docker rm hello-increment```
 
-Let's run it one last time, pointing to the same directory we used last time: ```docker run -d -p 10000:80 -v ~/docker_data:/tmp --name hello-increment binocarlos/hello-increment```.  When hitting [http://localhost:10000](http://localhost:10000) again, you will notice that the number has actually picked up from where it last left off.  For apps requiring persistence (Jenkins, DBs, etc.) Docker volumes are a lifesaver.
+Let's run it one last time, pointing to the same directory we used last time: 
+
+```docker run -d -p 10000:80 -v ~/docker_data:/tmp --name hello-increment binocarlos/hello-increment```.  
+
+When hitting [http://localhost:10000](http://localhost:10000) again, you will notice that the number has actually picked up from where it last left off.  For apps requiring persistence (Jenkins, DBs, etc.) Docker volumes are a lifesaver.
 
 ---
 ## 9. Ports
@@ -376,7 +390,9 @@ Among the bazillion other features Docker has, it also offers container-to-conta
 
 Type in ```docker network ls```.  This will list all Docker networks you currently have on your system.  Unless you have created them for other labs, you should only see three, named ```bridge```, ```host```, and ```none```.  By default, all Docker containers are placed on the ```bridge``` network.  This means that they can see and communicate with each other via this network.  In general, it is good practice to have specific-purpose networks for networked containers, to minimize noise and collisions.  So let's create one now.  
 
-```docker network create wordpress```.  This will create a new bridge network called "wordpress".  Bridge networks are the default type.  For information on the host and the null-type networks (named none), refer to the Docker documentation.
+```docker network create wordpress```.  
+
+This will create a new bridge network called "wordpress".  Bridge networks are the default type.  For information on the host and the null-type networks (named none), refer to the Docker documentation.
 
 Let's now get some containers talking to each other via this network.  Hmm... What would be a good candidate for this?  Wordpress!
 Wordpress requires a database.  Mysql will do.  Normally, provisioning a database is a fate I would not wish for even my worst enemy, but Docker makes it simple!
@@ -391,11 +407,19 @@ ENV MYSQL_PASSWORD wordpress
 ```
 This code uses an image with mysql already on it, and sets a bunch of environment variables used by mysql.
 
-Save it and then let's create an image from it: ```docker build -t my_mysql:1.0 .```
+Save it and then let's create an image from it: 
 
-Confirm that it has been created by finding it with ```docker images```.
+```docker build -t my_mysql:1.0 .```
 
-Let's run it: ```docker run -d -v ~/db_data:/var/lib/mysql --network wordpress --name mysql my_mysql:1.0```.  Note that we do not need to specify anything about port mapping, because nothing from the outside world is going to need to access this DB directly - only the wordpress container.
+Confirm that it has been created by finding it with 
+
+```docker images```.
+
+Let's run it: 
+
+```docker run -d -v ~/db_data:/var/lib/mysql --network wordpress --name mysql my_mysql:1.0```.  
+
+Note that we do not need to specify anything about port mapping, because nothing from the outside world is going to need to access this DB directly - only the wordpress container.
 
 We can confirm it is on the wordpress network using the ```docker inspect <container_reference>``` command like so: ```docker inspect mysql```.  This command outputs a bunch of information about the specified container in JSON format.  You should see something close to this toward the bottom of the output: 
 ```
@@ -432,9 +456,13 @@ ENV WORDPRESS_DB_PASSWORD wordpress
 ```
 This Dockerfile starts the image off with wordpress on it, and sets some environment variables in order to be able to talk to the mysql database found in our other container.  One really cool thing to note here is ```WORDPRESS_DB_HOST``` being set to ```mysql:3306```.  You don't even need to specify the IP address of the mysql container.  You can just refer to its container name and Docker will do the rest for you!
 
-So let's build this image: ```docker build -t my_wordpress:1.0```.
+So let's build this image: 
 
-And let's run it as well: ```docker run -d -p 8000:80 --network wordpress --name wordpress my_wordpress:1.0```
+```docker build -t my_wordpress:1.0```.
+
+And let's run it as well: 
+
+```docker run -d -p 8000:80 --network wordpress --name wordpress my_wordpress:1.0```
 
 We have placed both the mysql container and the wordpress container on the same wordpress network.  They are able to communicate with each other, and can even refer to one another by container name, but they cannot talk to any other containers on any other networks.  Likewise, no containers on other networks can access these two.  
 
@@ -490,9 +518,17 @@ Similarly, with the wordpress service, we want it to also always restart if it g
 
 Finally, we also tell docker-compose that we would like a data volume, by the name of db_data.
 
-Now for the magic:  Run the following command: ```docker-compose up -d``` and behold, as you have a running instance of Wordpress with a single command!
+Now for the magic:  Run the following command: 
 
-After you have been suitably impressed by this marvel of modern software engineering, you can turn it off with the following command: ```docker-compose down```, as long as you are in the same directory where you ran ```docker-compose up -d```.
+```docker-compose up -d``` 
+
+and behold, as you have a running instance of Wordpress with a single command!
+
+After you have been suitably impressed by this marvel of modern software engineering, you can turn it off with the following command: 
+
+```docker-compose down```
+
+, as long as you are in the same directory where you ran ```docker-compose up -d```.
 
 Imagine the possibilities that this kind of capability can have for, for instance, testers.  They could spin up an instance of your app with a database with test data in it with a single command!  The possibilities are pretty much endless.
 
