@@ -323,8 +323,14 @@ The -it (combination of -i and -t flags) flag stands for "interactive, terminal"
 
 ---
 ## 7. Volumes
-- Demonstrate persistence
-- https://hub.docker.com/r/binocarlos/hello-increment/
+Let's observe something interesting about Docker.  Let's use the ```hello-increment``` image found =[here](https://hub.docker.com/r/binocarlos/hello-increment/).
+
+Let's run it: ```docker run -d -p 10000:80 --name hello-increment binocarlos/hello-increment```
+You can now hit [http://localhost:10000](http://localhost:10000) to... increment a number.  Keep refreshing the page to continue incrementing the number.  For some reason it doesn't even increment by 1.  I have no idea why.
+
+Let's now stop the container: ```docker stop hello-increment```.
+
+Let's now re-start the container: ```docker start hello-increment```.  What would we expect the accumulated number displayed at localhost:10000 to be?  Same as last time?
 
 ---
 ## 8. Ports
