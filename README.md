@@ -290,12 +290,36 @@ We saw that you can list all running containers with the ```docker ps``` command
 ### Deleting Containers
 There are three primary ways to delete containers:
 1. Once a container has stopped, invoking ```docker rm <container name or ID>``` e.g. ```docker rm hello-world```.
+2. Specifying the --rm flag when running the container in the first place.  ```docker run --rm hello-world``` --> adding this flag will delete the container once it stops running.
+3. The ```docker container prune``` command.  Typing this command will remove ALL stopped containers in one fell swoop.  
 
+Try deleting some of your containers with one or more of these methods.
 
-- logs
-- sshing in
-- removing containers
-Docker allows you to execute arbitrary commands inside of already-running containers.  This can be useful for debugging containers, but is generally frowned upon for production purposes.  It is considered best practice to have your container in its final state 
+### Logs
+We mentioned above that Docker containers can be run in "detached mode", wherein they do not take over your terminal and their output is not attached to your terminal.  It is still possible to see the output of a Docker container using the ```docker logs <container_reference>``` command.  To demonstrate this, let's run the ```hello-world``` command in default as well as detached mode.
+
+Default:
+```docker run --rm --name hello-world hello-world```
+This should produce the output we have already seen.
+
+Detached:
+```docker run --name hello-world hello-world``` (Please note we do not want the --rm flag because we want the container to stick around after it completes its task.)
+This command should produce no output to your terminal.  We can instead see the output by invoking ```docker logs hello-world```.  You can tail ongoing output from a container similarly to how it is done in linux, with the -f flag (short for "follow").  You will find that being able to view the "logs" of your container to be very helpful for debugging purposes.
+
+### SSHing Into Your Containers
+Docker allows you to execute arbitrary commands inside of already-running containers.  It is considered best practice to have your container in its production-ready state right after being run -- requiring manual intervention to set up your containers properly really defeats the purpose of what Docker is trying to do.  Nevertheless, executing arbitrary commands can be useful for debugging containers.
+
+Let's make a nice, easily-referenceable version of the wearebigchill docker container for these next commands.  Change back into the wearebigchill directory.  
+Step 1: Run ```docker build --tag wearebigchill:1.0 .```
+Step 2: Run ```docker run -p 15000:80 --name wearebigchill wearebigchill:1.0```
+
+So to demonstrate executing commands inside containers run ```docker exec wearebigchill pwd```.  This will execute the ```pwd``` ,(present working directory) command inside of your container.  It will display ```/```, indicating that the present working directory in the container is the root folder.  Similarly, running ```docker exec wearebigchill ls``` will list the contents of your current directory.  The contents should look broadly familiar to anybody familiar with Linux.  The container has its entire own filesystem!
+
+Perhaps one of the most practical EXEC commands to run is /bin/bash, which when combined with some special flags will effectively let you ssh into your container.  This can be accomplished with the following command:
+
+```docker exec -it wearebigchill /bin/bash```
+
+The -it (combination of -i and -t flags) flag stands for "interactive, terminal", and attaches the command to your current terminal.  The command we are invoking inside of the container is a bash shell, and we are hooking it up to our host OS terminal.  You can now navigate throughout your container as you would any other OS!  Again, this is generally frowned upon for production purposes, but can be incredibly useful for debugging.
 
 ---
 ## 7. Volumes
