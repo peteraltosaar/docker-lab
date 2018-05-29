@@ -361,7 +361,7 @@ Let's now stop and remove the container one last time:
 Let's run it one last time, pointing to the same directory we used last time: ```docker run -d -p 10000:80 -v ~/docker_data:/tmp --name hello-increment binocarlos/hello-increment```.  When hitting [http://localhost:10000](http://localhost:10000) again, you will notice that the number has actually picked up from where it last left off.  For apps requiring persistence (Jenkins, DBs, etc.) Docker volumes are a lifesaver.
 
 ---
-## 8. Ports
+## 9. Ports
 So you have been taking on faith the use of the -p flag so far.  Let's clarify a few things about it.  -p stands for "port", and allows you to configure port mappings between the host OS and containers.  It takes the form of ```-p <host port>:<container port>```.  Docker ports are not actually exposed to the outside world by default.  So even if you have a webserver in a container listening on port 80, by default, you will not be able to access this, even from port 80 on your host OS (e.g. http://localhost:8080).  In order to do this, we need to tell Docker which host OS ports point to which container ports.  
 
 So when we run the command ```docker run -p 10000:80 --name hello-increment binocarlos/hello-increment```, we are telling Docker that any traffic hitting http://localhost:10000 should be forwarded into this container, at port 80, presumably to some webserver sitting there, listening there.  
@@ -369,7 +369,7 @@ So when we run the command ```docker run -p 10000:80 --name hello-increment bino
 We have talked about the EXPOSE command and how it is often used as a form of documentation for users of the image.  However, you CAN use the -P flag (a capital P) when running a container, to have Docker assign an ephemeral port to any exposed ports (higher than 32768).  It is not clear to me at this time why you would ever want a random port number and not a fixed one.
 
 ---
-## 9. Networking
+## 10. Networking
 Among the bazillion other features Docker has, it also offers container-to-container networking.  
 
 Type in ```docker network ls```.  This will list all Docker networks you currently have on your system.  Unless you have created them for other labs, you should only see three, named ```bridge```, ```host```, and ```none```.  By default, all Docker containers are placed on the ```bridge``` network.  This means that they can see and communicate with each other via this network.  In general, it is good practice to have specific-purpose networks for networked containers, to minimize noise and collisions.  So let's create one now.  
@@ -441,7 +441,7 @@ Well congratulations, because you now have a working instance of Wordpress, with
 To confirm it is using our mysql container, you could list the contents of the host OS data directory: ```ls ~/db_data```.  You will see a series of mysql files.
 
 ---
-## 10. Docker Compose
+## 11. Docker Compose
 
 So in the previous section we created a working instance of Wordpress with a handful of commands and two Dockerfiles.  Pretty cool if you ask me.  But can we do better?  
 
@@ -495,7 +495,7 @@ After you have been suitably impressed by this marvel of modern software enginee
 Imagine the possibilities that this kind of capability can have for, for instance, testers.  They could spin up an instance of your app with a database with test data in it with a single command!  The possibilities are pretty much endless.
 
 ---
-## 11. Resources
+## 12. Further Resources
 
 1. Honestly, the number one best resource for all things docker-related is the "Dockermentation", [the official documentation](https://docs.docker.com/) that Docker itself puts out.  It has a wealth of information, is incredibly comprehensive and thorough, includes further tutorials, and even has a toggle to switch between daytime and nighttime modes (light vs. dark backgrounds)!
 
