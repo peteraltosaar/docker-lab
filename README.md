@@ -197,8 +197,14 @@ ea99ba7b96d3        6 days ago          /bin/sh -c apk --no-cache add ca-certifi
 ```
 
 ---
-## 6. Exploring Containers
+## 6. Creating Images
+- 
 
+
+---
+## 7. Exploring Containers
+
+### Listing Containers
 You can list all running containers using the ```docker ps``` command (think ps, like the linux command for listing running processes).
 If the wearebigchill container is not running, run it now, using the ```docker run -p 8090:80 <image ID>``` command.  If you do not have the image ID handy, you can list all images you currently have downloaded on your system with the ```docker images``` command:
 ```
@@ -213,11 +219,19 @@ CONTAINER ID   IMAGE         COMMAND      CREATED             STATUS            
 c6a4cefa06ad   49aee06e8e38  "/start.sh"  24 hours ago        Up 21 hours         0.0.0.0:8090->80/tcp      loving_rosalind
 ```
 
-### An aside
-```loving_rosalind```??  If you do not specify a name for a docker container (we'll see how to do this in a bit) then Docker will come up with a name for it, combining an adjective and a prominent technological/scientific pioneer
-https://github.com/moby/moby/blob/master/pkg/namesgenerator/names-generator.go
+### Container Names
+```loving_rosalind```??  If you do not specify a name for a docker container (we'll see how to do this in a bit) then Docker will come up with a name for it, combining an adjective and a prominent technological/scientific pioneer with an underscore.  You can actually look at the go code [here](https://github.com/moby/moby/blob/master/pkg/namesgenerator/names-generator.go) that generates these names.  Whoever wrote it apparently thinks Steve Wozniak is very interesting.
 
-- ps-a
+If you prefer your containers to have more meaningful names, then you can specify one when you first instantiate the container with the --name <container_name> flag.  So for instance, if we were to invoke ```docker run --name hello-world hello-world```, it would create an instance of the hello-world image and also call it "hello-world".  Naming containers is a good practice.  Not only does it make it easier to identify and differentiate your containers, you can also use their names to refer to them in commands.  So you could say ```docker inspect goodbye_world``` rather than ```docker inspect 151dae5a...blah blah blah```.
+
+### Listing Containers, Continued
+We saw that you can list all running containers with the ```docker ps``` command.  When containers stop running, they are not by default deleted.  You can list ALL containers, whether running or stopped with the -a flag: ```docker ps -a```.  You might be surprised how many you accrue from time to time.  Try this, and note that you should have multiple instances of the image we ran earlier for that Docker game.  How does one remove unnecessary Docker containers?  I'm glad you asked!
+
+### Deleting Containers
+There are three primary ways to delete containers:
+1. Once a container has stopped, invoking ```docker rm <container name or ID>``` e.g. ```docker rm hello-world```.
+
+
 - logs
 - sshing in
 - removing containers
@@ -244,6 +258,4 @@ Docker allows you to execute arbitrary commands inside of already-running contai
 ## 10. Docker Compose
 - https://docs.docker.com/compose/wordpress/#define-the-project
 
----
-## 11. Creating Images / Uploading to Docker Hub
-- 
+
