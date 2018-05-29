@@ -198,13 +198,38 @@ ea99ba7b96d3        6 days ago          /bin/sh -c apk --no-cache add ca-certifi
 
 ---
 ## 6. Creating Images
-- 
 
 Download the jar file located [here](https://www.dropbox.com/s/cmh87m1rvo39nvz/mtdan-1.0-SNAPSHOT.jar?dl=0) to a directory other than the wearebigchill one we've been in this whole time.  Let's pretend that it is your project's deployable artifact, and not the steaming pile of garbage that it is. (FYI - It is safe but I assure you it is garbage.  Mike and I hacked this thing together last night for illustrative purposes.).  It is a Spring Boot jar.  If you like, you can run it to see what it does (```java -jar mtdan-1.0-SNAPSHOT.jar```).  You can hit it at [localhost:8080](http://localhost:8080).  It should say  "Who are you?"  This is because it looks for a name under the YOUR_NAME environment variable, which I'm thinking is a safe bet to not be defined on anybody's computer.  Let's get this thing running in Docker!
 
-Step 1.  The Dockerfile.
+Step 1: The Dockerfile.
+1. The first thing we need is to have an image with Java in it.  We COULD take a linux image and install Java into it ourselves, but why reinvent the wheel?  Go to [hub.docker.com](https://hub.docker.com) and find a suitable image to start with.
+<details>
+ <summary>If nothing is jumping out at you in the first few pages, click on this line for our recommendation</summary>
+ openjdk (Don't worry about a specific tag/version for this exercise.)
+</details>
+  
+Use your favourite editor to create a file in the same directory as the downloaded jar, naming this file ```Dockerfile``` (no extension).
+The first line is going to be ```FROM <base image you have decided upon>```.
 
+2. Next, we need to actually get the jar itself into the image.  This can be done with a command very similar to the ADD command - the COPY command.  It has the same syntax: ```COPY <local file> <location on container>```  Place it into root.  COPY differs from ADD insofar as it is a straight copy.  ADD will do some additional processing of the file depending on what it is.  For instance, ```ADD some-tar-file.tar /``` would copy the tar file to the image, and then extract it automatically.  ```COPY some-tar-file.tar /``` will copy the file and do nothing else with it.  It is a best practice to use COPY rather than ADD for when you are merely wanting to get a file into the image.
 
+<details>
+ <summary>Click here if you want to see what this line should look like</summary>
+ COPY mtdan-1.0-SNAPSHOT.jar /
+</details>
+    
+3. Finally, we want the spring boot jar with its embedded Tomcat server to start whenever the container starts.  This is achieved with the CMD command.  There are a few different syntaxes for this, but the most common one I've seen is called "exec form".  More details on it can be found [here](https://docs.docker.com/engine/reference/builder/#cmd).  It requires that whatever linux command you want to run is an array of Strings, delineated by spaces.  So for instance, if you wanted to run ```ps -aux```, this would actually be ```["ps", "-aux"].  In light of this, try and figure out how you would input the ```java -jar /mtdan-1.0-SNAPSHOT.jar``` command.  
+<details>
+ <summary>The answer is here</summary>
+ CMD ["java", "-jar", "/mtdan-1.0-SNAPSHOT.jar"]
+</details>
+
+<details>
+ <summary>Here is what your Dockerfile should currently look like</summary>
+ FROM openjdk
+ COPY mtdan-1.0-SNAPSHOT.jar /
+ CMD ["java", "-jar", "/mtdan-1.0-SNAPSHOT.jar"]
+</details>
 
 
 
