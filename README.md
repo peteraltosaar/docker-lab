@@ -382,7 +382,7 @@ When hitting [http://localhost:10000](http://localhost:10000) again, you will no
 
 ---
 ## 9. Ports
-So you have been taking on faith the use of the -p flag so far.  Let's clarify a few things about it.  -p stands for "port", and allows you to configure port mappings between the host OS and containers.  It takes the form of ```-p <host port>:<container port>```.  Docker ports are not actually exposed to the outside world by default.  So even if you have a webserver in a container listening on port 80, by default, you will not be able to access this, even from port 80 on your host OS (e.g. http://localhost:8080).  In order to do this, we need to tell Docker which host OS ports point to which container ports.  
+So you have been taking on faith the use of the -p flag so far.  Let's clarify a few things about it.  -p stands for "publish", and allows you to configure port mappings between the host OS and containers.  It takes the form of ```-p <host port>:<container port>```.  Docker ports are not actually exposed to the outside world by default.  So even if you have a webserver in a container listening on port 80, by default, you will not be able to access this, even from port 80 on your host OS (e.g. http://localhost:8080).  In order to do this, we need to tell Docker which host OS ports point to which container ports.  
 
 So when we run the command ```docker run -p 10000:80 --name hello-increment binocarlos/hello-increment```, we are telling Docker that any traffic hitting http://localhost:10000 should be forwarded into this container, at port 80, presumably to some webserver sitting there, listening there.  
 
